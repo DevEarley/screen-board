@@ -9,8 +9,8 @@ colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_5ono5"]
 gradient = SubResource("Gradient_cotvx")
-fill_from = Vector2(0, 0.023504274)
-fill_to = Vector2(0, 1)
+fill_from = Vector2(0, 0.51495725)
+fill_to = Vector2(0, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhht3"]
 bg_color = Color(0, 0, 0, 1)
@@ -73,7 +73,18 @@ default_color = Color(0.46080002, 0.96, 0.80192, 0.64705884)
 custom_minimum_size = Vector2(1920, 1080)
 layout_mode = 2
 
-[node name="MENU" type="Button" parent="Control"]
+[node name="MENU_CONTROL" type="Control" parent="Control"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_right = 100.0
+offset_bottom = 200.0
+grow_horizontal = 2
+
+[node name="MENU" type="Button" parent="Control/MENU_CONTROL"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -93,32 +104,41 @@ access = 2
 
 [node name="Control" type="Control" parent="Control"]
 visible = false
-custom_minimum_size = Vector2(800, 200)
+custom_minimum_size = Vector2(800, 100)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 40.0
+offset_left = -400.0
+offset_right = 400.0
+offset_bottom = 100.0
 grow_horizontal = 2
 mouse_filter = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/Control"]
 layout_mode = 1
-anchors_preset = 5
+anchors_preset = 8
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-offset_left = -133.5
-offset_right = 133.5
-offset_bottom = 40.0
+anchor_bottom = 0.5
+offset_left = -182.0
+offset_top = -20.0
+offset_right = 182.0
+offset_bottom = 20.0
 grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="Button" type="Button" parent="Control/Control/HBoxContainer"]
+[node name="CLEAR" type="Button" parent="Control/Control/HBoxContainer"]
 layout_mode = 2
 mouse_filter = 1
 text = "CLEAR"
+
+[node name="RECENTS" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+text = "RECENTS"
 
 [node name="PASTE" type="Button" parent="Control/Control/HBoxContainer"]
 layout_mode = 2
@@ -129,6 +149,12 @@ text = "PASTE"
 layout_mode = 2
 mouse_filter = 1
 text = "SAVE"
+
+[node name="PASSTHROUGH" type="Button" parent="Control/Control/HBoxContainer"]
+visible = false
+layout_mode = 2
+mouse_filter = 1
+text = "PASSTHROUGH MODE OFF"
 
 [node name="QUIT" type="Button" parent="Control/Control/HBoxContainer"]
 layout_mode = 2
@@ -143,6 +169,7 @@ initial_position = 3
 size = Vector2i(1920, 1080)
 current_screen = 1
 transparent = true
+force_native = true
 content_scale_size = Vector2i(1920, 1080)
 content_scale_mode = 2
 script = ExtResource("2_kxle2")
@@ -198,14 +225,76 @@ texture = ExtResource("3_mhht3")
 expand_mode = 1
 stretch_mode = 2
 
-[connection signal="mouse_entered" from="Control/MENU" to="." method="_on_menu_mouse_entered"]
+[node name="RECENTS" type="Window" parent="."]
+oversampling_override = 1.0
+title = "RECENTS"
+initial_position = 1
+size = Vector2i(820, 600)
+visible = false
+exclusive = true
+unresizable = true
+always_on_top = true
+popup_window = true
+minimize_disabled = true
+maximize_disabled = true
+
+[node name="Control2" type="Control" parent="RECENTS"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CLEAR_RECENTS" type="Button" parent="RECENTS/Control2"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -93.0
+offset_bottom = 31.0
+grow_horizontal = 0
+text = "CLEAR LIST"
+
+[node name="CANCEL" type="Button" parent="RECENTS/Control2"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -93.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "CANCEL"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="RECENTS/Control2"]
+custom_minimum_size = Vector2(820, 500)
+layout_mode = 0
+offset_left = 5.0
+offset_top = 50.0
+offset_right = 825.0
+offset_bottom = 550.0
+
+[node name="RECENTS_CONTAINER" type="GridContainer" parent="RECENTS/Control2/ScrollContainer"]
+custom_minimum_size = Vector2(800, 500)
+layout_mode = 2
+columns = 4
+
+[connection signal="mouse_entered" from="Control/MENU_CONTROL/MENU" to="." method="_on_menu_mouse_entered"]
 [connection signal="file_selected" from="Control/FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="mouse_exited" from="Control/Control" to="." method="_on_control_mouse_exited"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/CLEAR" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/RECENTS" to="." method="_on_recents_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/SAVE" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/PASSTHROUGH" to="." method="_on_passthrough_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/QUIT" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/SAVE" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/QUIT" to="." method="_on_quit_pressed"]
+[connection signal="close_requested" from="RECENTS" to="." method="_on_recents_close_requested"]
+[connection signal="pressed" from="RECENTS/Control2/CLEAR_RECENTS" to="." method="_on_clear_recents_pressed"]
+[connection signal="pressed" from="RECENTS/Control2/CANCEL" to="." method="_on_cancel_load_from_recents_pressed"]

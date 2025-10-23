@@ -1,0 +1,58 @@
+[gd_scene load_steps=3 format=3 uid="uid://cc68utpxjh2yo"]
+
+[ext_resource type="Texture2D" uid="uid://diym8innymybm" path="res://BUTTON_BG.png" id="1_kscjk"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_r1ubd"]
+
+[node name="RecentFile" type="Control"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 200.0
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+show_behind_parent = true
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+texture = ExtResource("1_kscjk")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(160, 90)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 5.0
+offset_right = 80.0
+offset_bottom = 95.0
+grow_horizontal = 2
+texture = SubResource("PlaceholderTexture2D_r1ubd")
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(190, 110)
+layout_mode = 0
+offset_left = 5.0
+offset_top = 95.0
+offset_right = 195.0
+offset_bottom = 205.0
+text = "DATE TIME"
+autowrap_mode = 1
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 142.0
+offset_top = 163.0
+offset_right = 194.0
+offset_bottom = 194.0
+text = "LOAD"
+
+[node name="DELETE" type="Button" parent="."]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 162.0
+offset_right = 138.0
+offset_bottom = 193.0
+text = "DELETE"
