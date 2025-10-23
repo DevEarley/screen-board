@@ -7,7 +7,7 @@ var ENDING_POINT
 var UNDO_HISTORY:Array[ImageTexture]
 var RECENT_FILE_PREFAB = preload("res://RECENT_FILE.tscn")
 var CURRENT_FILE_WAS_SAVED_OUTSIDE = false
-var OPENED_RECENT:Recent = null;
+var LAST_FILE_OPENED:Recent = null;
 var OPENED_FROM_RECENT = false
 var PASSTHROUGH_MODE_ON = false #MAC AND LINUX ONLY
 var MAKING_STRAIGHT_LINE = false
@@ -25,7 +25,10 @@ func _ready() -> void:
 	UNDO_HISTORY = []
 	$TextureRect.texture = ImageTexture.new()
 	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.new()
+	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.texture = ImageTexture.new()
 	add_to_history()
+	await WAIT.for_seconds(0.1)
+	_on_paste_pressed()
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -38,9 +41,10 @@ func _notification(what):
 func clear_screen():
 	CURRENT_FILE_WAS_SAVED_OUTSIDE = false
 	OPENED_FROM_RECENT = false
-	OPENED_RECENT = null
+	LAST_FILE_OPENED = null
 	$SubViewport.render_target_clear_mode = 2
 	$TextureRect.texture = ImageTexture.new()
+	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.texture = ImageTexture.new()
 	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.new()
 	add_to_history()
 
@@ -183,11 +187,13 @@ func handle_input(event:InputEvent):
 func copy_screen_to_input_window():
 	var image:Image = $SubViewport.get_texture().get_image()
 	if( $TextureRect.texture!=null):
-		var bg = $TextureRect.texture.get_image()
+		var bg:Image = $TextureRect.texture.get_image()
 		if(bg != null):
 			var rect = Rect2i(Vector2i.ZERO, image.get_size())
-			bg.blend_rect(image,rect,Vector2i.ZERO)
-			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.create_from_image(bg)
+			#bg.blend_rect(image,rect,Vector2i.ZERO)
+			#bg.resize(1920,1080,Image.INTERPOLATE_TRILINEAR);
+			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.create_from_image(image)
+			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.texture = ImageTexture.create_from_image(bg)
 		else:
 			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.create_from_image(image);
 
@@ -210,11 +216,20 @@ func _on_quit_pressed() -> void:
 
 
 func _on_save_pressed() -> void:
+	var fd: FileDialog = $Control/FileDialog
+	if(LAST_FILE_OPENED !=null):
+		fd.current_file = LAST_FILE_OPENED.Path
+		fd.current_path = LAST_FILE_OPENED.Path
+	else:
+		var dateTime = "%s.png" % Time.get_datetime_string_from_system(true,false)
+		dateTime=dateTime.replacen(":","_")
+		fd.current_file = dateTime
 	$Control/FileDialog.show()
 
 func _on_paste_pressed() -> void:
 	var clipboard_image:Image = DisplayServer.clipboard_get_image()
-	$TextureRect.texture = ImageTexture.create_from_image(clipboard_image)
+	if(clipboard_image != null):
+		$TextureRect.texture = ImageTexture.create_from_image(clipboard_image)
 
 
 func _on_undo_pressed() -> void:
@@ -292,16 +307,18 @@ func try_to_load_texture_from_path(path):
 	var image = Image.new()
 	var err = image.load(path)
 	if err != OK:
-		print("File not loaded:",err)
+		print(" try_to_load_texture_from_path - File not loaded:",err)
 	return image
 
 func _on_clear_recents_pressed() -> void:
 	DATA.RECENTS = []
-	build_recents_list()
+	DATA.save_everything()
+	DATA.CALLBACK = build_recents_list
+
 
 func on_load_from_recents(recent:Recent):
 		OPENED_FROM_RECENT = true
-		OPENED_RECENT = recent
+		LAST_FILE_OPENED = recent
 		$RECENTS.hide()
 		var image_from_path:Image = try_to_load_texture_from_path(recent.Path)
 
@@ -309,7 +326,7 @@ func on_load_from_recents(recent:Recent):
 
 func on_delete_from_recents(recent:Recent):
 		OPENED_FROM_RECENT = true
-		OPENED_RECENT = recent
+		LAST_FILE_OPENED = recent
 		var index = 0
 		var index_to_delete = -1
 		for recent_ in DATA.RECENTS:
@@ -330,11 +347,12 @@ func build_recents_list():
 		var recent_control = RECENT_FILE_PREFAB.instantiate()
 		var recent_load_button:Button = recent_control.get_node("Button");
 		recent_load_button.connect("pressed",on_load_from_recents.bind(recent));
+		var recent_delete_button:Button = recent_control.get_node("DELETE");
 		if(recent.SavedOutsideUserDirectory):
 			recent_control.get_node("Label").text = "%s" %  recent.Path
+			recent_delete_button.hide()
 		else:
 			recent_control.get_node("Label").text = "%s (DRAFT)" % recent.Path
-			var recent_delete_button:Button = recent_control.get_node("DELETE");
 			recent_delete_button.connect("pressed",on_delete_from_recents.bind(recent));
 			recent_delete_button.show()
 		var image_from_path:Image = try_to_load_texture_from_path(recent.ThumbnailPath)
@@ -345,17 +363,22 @@ func save_current_to_recents():
 	var recent
 
 	if(OPENED_FROM_RECENT == true):
-		recent = OPENED_RECENT
+		recent = LAST_FILE_OPENED
+
 	else:
 		recent = Recent.new()
 
-	var bg = $TextureRect.texture.get_image()
 	var image:Image = $SubViewport.get_texture().get_image()
 	var rect = Rect2i(Vector2i.ZERO, image.get_size())
 	var image_to_save;
-	if(bg != null):
-		bg.blend_rect(image,rect,Vector2i.ZERO)
-		image_to_save = bg;
+	if($TextureRect.texture != null):
+		var bg = $TextureRect.texture.get_image()
+		if(bg != null):
+			bg.blend_rect(image,rect,Vector2i.ZERO)
+			image_to_save = bg;
+		else:
+			image_to_save = image
+
 	else:
 		image_to_save = image
 
@@ -372,7 +395,6 @@ func save_current_to_recents():
 	recent.DateTime = dateTime;
 	recent.Path = path;
 	recent.ThumbnailPath = thumb_path;
-	recent.SavedOutsideUserDirectory = false
 	Thumb.save_png(thumb_path)
 	ImageToSave.save_png(path)
 	DATA.RECENTS.push_front(recent)
@@ -395,27 +417,40 @@ func _on_file_dialog_file_selected(path: String) -> void:
 	var dateTime = "%s" % Time.get_datetime_string_from_system(true,false)
 	dateTime=dateTime.replacen(":","_")
 	var recent:Recent;
-	var thumb_path
+	var thumb_path = "user://thumb-%s.png"%dateTime
+	recent = Recent.new()
+	recent.DateTime = dateTime;
 
-	if(CURRENT_FILE_WAS_SAVED_OUTSIDE == true):
-		recent = OPENED_RECENT
-		recent.DateTime= dateTime
-		thumb_path = recent.ThumbnailPath;
-		for recent_ in DATA.RECENTS:
-			if(recent_.Path == recent.Path):
-				recent_.DateTime = dateTime
-				recent.SavedOutsideUserDirectory = true
+	recent.Path = path;
+	recent.ThumbnailPath = thumb_path;
+	recent.SavedOutsideUserDirectory = true
+	LAST_FILE_OPENED = recent;
 
-	elif(CURRENT_FILE_WAS_SAVED_OUTSIDE == false):
-		thumb_path = "user://thumb-%s.png"%dateTime
-		recent = Recent.new()
-		recent.DateTime = dateTime;
-
-		recent.Path = path;
-		recent.ThumbnailPath = thumb_path;
-		recent.SavedOutsideUserDirectory = false
-		DATA.RECENTS.push_front(recent)
-
+	DATA.RECENTS.push_front(recent)
+	DATA.CALLBACK = build_recents_list
 	image_to_save.save_png(path)
 	Thumb.save_png(thumb_path)
+	DATA.save_everything()
 	CURRENT_FILE_WAS_SAVED_OUTSIDE = true
+
+
+func _on_open_pressed() -> void:
+	$Control/OpenDialog.show();
+
+
+func _on_open_dialog_file_selected(path: String) -> void:
+	#try to find matching recent and load that.
+	#load file and create recent
+	var image_from_path:Image = try_to_load_texture_from_path(path)
+	var recent:Recent = Recent.new();
+	recent.Path = path
+	recent.SavedOutsideUserDirectory = true;
+
+	LAST_FILE_OPENED = recent;
+
+	$TextureRect.texture = ImageTexture.create_from_image(image_from_path)
+
+
+func _on_save_draft_pressed() -> void:
+		save_current_to_recents()
+		clear_screen()

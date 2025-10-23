@@ -25,17 +25,19 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_jr7ni")
 
+[node name="TextureRect" type="TextureRect" parent="."]
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+
 [node name="BG" type="TextureRect" parent="."]
 visible = false
 show_behind_parent = true
 custom_minimum_size = Vector2(1920, 100)
 layout_mode = 2
 texture = SubResource("GradientTexture2D_5ono5")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-show_behind_parent = true
-layout_mode = 2
-mouse_filter = 2
 
 [node name="SubViewport" type="SubViewport" parent="."]
 transparent_bg = true
@@ -99,8 +101,18 @@ text = "MENU"
 [node name="FileDialog" type="FileDialog" parent="Control"]
 oversampling_override = 1.0
 initial_position = 1
-display_mode = 1
 access = 2
+filters = PackedStringArray("*.png")
+use_native_dialog = true
+
+[node name="OpenDialog" type="FileDialog" parent="Control"]
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 1
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png")
+use_native_dialog = true
 
 [node name="Control" type="Control" parent="Control"]
 visible = false
@@ -150,6 +162,16 @@ layout_mode = 2
 mouse_filter = 1
 text = "SAVE"
 
+[node name="SAVE_DRAFT" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+text = "SAVE DRAFT & CLEAR"
+
+[node name="OPEN" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+text = "OPEN"
+
 [node name="PASSTHROUGH" type="Button" parent="Control/Control/HBoxContainer"]
 visible = false
 layout_mode = 2
@@ -169,7 +191,6 @@ initial_position = 3
 size = Vector2i(1920, 1080)
 current_screen = 1
 transparent = true
-force_native = true
 content_scale_size = Vector2i(1920, 1080)
 content_scale_mode = 2
 script = ExtResource("2_kxle2")
@@ -215,15 +236,29 @@ handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
-[node name="TextureRect_CLONE" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+[node name="TextureRect_CLONE2" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
 show_behind_parent = true
 custom_minimum_size = Vector2(1920, 1080)
-offset_right = 1920.0
-offset_bottom = 1080.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("3_mhht3")
 expand_mode = 1
-stretch_mode = 2
+
+[node name="TextureRect_CLONE" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_mhht3")
+expand_mode = 1
 
 [node name="RECENTS" type="Window" parent="."]
 oversampling_override = 1.0
@@ -284,11 +319,14 @@ columns = 4
 
 [connection signal="mouse_entered" from="Control/MENU_CONTROL/MENU" to="." method="_on_menu_mouse_entered"]
 [connection signal="file_selected" from="Control/FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="file_selected" from="Control/OpenDialog" to="." method="_on_open_dialog_file_selected"]
 [connection signal="mouse_exited" from="Control/Control" to="." method="_on_control_mouse_exited"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/CLEAR" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/RECENTS" to="." method="_on_recents_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/SAVE" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/SAVE_DRAFT" to="." method="_on_save_draft_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/OPEN" to="." method="_on_open_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/PASSTHROUGH" to="." method="_on_passthrough_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/QUIT" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/Button" to="." method="_on_button_pressed"]

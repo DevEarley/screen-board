@@ -39,7 +39,8 @@ func load_user_recent_files():
 				recent_file.Path = user_data.get_value(section,"PATH")
 				recent_file.SavedOutsideUserDirectory = user_data.get_value(section,"SAVED_OUTSIDE")
 				RECENTS.push_front(recent_file)
-
+	else:
+		print(" load_user_recent_files - File not loaded:",user_data_err)
 	if(CALLBACK.is_valid()):
 		CALLBACK.call()
 
@@ -61,6 +62,6 @@ func save_recent_files_to_user_data():
 		index+=1;
 	var err = await user_data.save("user://recent_files.cfg")
 	if err != OK:
-		print(err)
+		print(" load_user_recent_files - File not loaded:",err)
 	if(CALLBACK.is_valid()):
 		CALLBACK.call()

@@ -50,9 +50,10 @@ offset_bottom = 194.0
 text = "LOAD"
 
 [node name="DELETE" type="Button" parent="."]
+visible = false
 layout_mode = 0
-offset_left = 73.0
-offset_top = 162.0
-offset_right = 138.0
-offset_bottom = 193.0
-text = "DELETE"
+offset_left = 7.0
+offset_top = 164.0
+offset_right = 126.0
+offset_bottom = 195.0
+text = "DELETE DRAFT"

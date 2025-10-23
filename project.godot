@@ -19,6 +19,7 @@ config/windows_native_icon="res://ICON.ico"
 [autoload]
 
 DATA="*res://GLOBAL_DATA.gd"
+WAIT="*res://GLOBAL_WAIT.gd"
 
 [display]
 
@@ -32,6 +33,8 @@ window/subwindows/embed_subwindows=false
 window/stretch/mode="viewport"
 window/stretch/aspect="ignore"
 window/per_pixel_transparency/allowed=true
+window/handheld/orientation=1
+window/vsync/vsync_mode=0
 
 [input]
 
