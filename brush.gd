@@ -229,6 +229,11 @@ func _on_save_pressed() -> void:
 func _on_paste_pressed() -> void:
 	var clipboard_image:Image = DisplayServer.clipboard_get_image()
 	if(clipboard_image != null):
+
+		if(clipboard_image.get_width() < 1920 && clipboard_image.get_height() < 1080):
+			$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
+		else:
+			$TextureRect.stretch_mode =TextureRect.STRETCH_SCALE
 		$TextureRect.texture = ImageTexture.create_from_image(clipboard_image)
 
 
@@ -307,7 +312,7 @@ func try_to_load_texture_from_path(path):
 	var image = Image.new()
 	var err = image.load(path)
 	if err != OK:
-		print(" try_to_load_texture_from_path - File not loaded:",err)
+		print(" try_to_load_texture_from_path - File not loaded:",err,path)
 	return image
 
 func _on_clear_recents_pressed() -> void:
@@ -322,6 +327,10 @@ func on_load_from_recents(recent:Recent):
 		$RECENTS.hide()
 		var image_from_path:Image = try_to_load_texture_from_path(recent.Path)
 
+		if(image_from_path.get_width() < 1920 && image_from_path.get_height() < 1080):
+			$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
+		else:
+			$TextureRect.stretch_mode =TextureRect.STRETCH_SCALE
 		$TextureRect.texture = ImageTexture.create_from_image(image_from_path)
 
 func on_delete_from_recents(recent:Recent):
@@ -442,12 +451,27 @@ func _on_open_dialog_file_selected(path: String) -> void:
 	#try to find matching recent and load that.
 	#load file and create recent
 	var image_from_path:Image = try_to_load_texture_from_path(path)
+	var Thumb :Image = image_from_path.duplicate(true)
+	Thumb.resize(160,90,Image.INTERPOLATE_TRILINEAR)
+	var dateTime = "%s" % Time.get_datetime_string_from_system(true,false)
+	dateTime=dateTime.replacen(":","_")
+	var thumb_path = "user://thumb-%s.png"%dateTime
 	var recent:Recent = Recent.new();
+	recent.ThumbnailPath = thumb_path;
+	recent.DateTime = dateTime;
 	recent.Path = path
+	Thumb.save_png(thumb_path)
 	recent.SavedOutsideUserDirectory = true;
-
+	DATA.RECENTS.push_front(recent)
+	DATA.save_everything()
 	LAST_FILE_OPENED = recent;
+	var width = image_from_path.get_width()
+	var height = image_from_path.get_height()
+	if(width< 1920 && height < 1080):
 
+		$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
+	else:
+		$TextureRect.stretch_mode =TextureRect.STRETCH_SCALE
 	$TextureRect.texture = ImageTexture.create_from_image(image_from_path)
 
 
