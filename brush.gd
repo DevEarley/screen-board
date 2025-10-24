@@ -13,6 +13,17 @@ var PASSTHROUGH_MODE_ON = false #MAC AND LINUX ONLY
 var MAKING_STRAIGHT_LINE = false
 var clicks = 0
 var save_timer:Timer
+var HISTORY_TIMER:Timer
+
+@export var RED_COLOR:Color;
+@export var BLUE_COLOR:Color;
+@export var GREEN_COLOR:Color;
+@export var YELLOW_COLOR:Color;
+@export var BLACK_COLOR:Color;
+@export var LIGHT_GREY_COLOR:Color;
+@export var GREY_COLOR:Color;
+@export var DARK_GREY_COLOR:Color;
+@export var WHITE_COLOR:Color;
 
 func _ready() -> void:
 
@@ -22,6 +33,14 @@ func _ready() -> void:
 	save_timer.wait_time = 0.2
 	save_timer.one_shot = true
 	save_timer.connect("timeout",on_save_timer_timeout)
+
+	HISTORY_TIMER = Timer.new()
+	add_child(HISTORY_TIMER)
+	HISTORY_TIMER.wait_time = 0.5
+	HISTORY_TIMER.one_shot = true
+	HISTORY_TIMER.connect("timeout",add_to_history)
+
+
 	UNDO_HISTORY = []
 	$TextureRect.texture = ImageTexture.new()
 	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.new()
@@ -39,22 +58,26 @@ func _notification(what):
 		get_tree().quit() # default behavior
 
 func clear_screen():
+	add_to_history()
+
 	CURRENT_FILE_WAS_SAVED_OUTSIDE = false
 	OPENED_FROM_RECENT = false
 	LAST_FILE_OPENED = null
 	$SubViewport.render_target_clear_mode = 2
+	$TextureRect.show()
 	$TextureRect.texture = ImageTexture.new()
+	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.show()
 	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.texture = ImageTexture.new()
 	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.new()
+	_on_hide_bg_pressed()
 	add_to_history()
 
 func _input(event:InputEvent):
 	handle_input(event)
 
-
 func _process(delta):
 	pass
-	copy_screen_to_input_window()
+	#copy_screen_to_input_window()
 
 func on_save_timer_timeout():
 	READY_TO_ADD_TO_HISTORY = true
@@ -76,6 +99,7 @@ func add_to_history():
 			if(bg == null):
 				UNDO_HISTORY.push_front(ImageTexture.create_from_image(image))
 			else:
+				image.resize(bg.get_width(),bg.get_height())
 				var rect = Rect2i(Vector2i.ZERO, image.get_size())
 				bg.blend_rect(image,rect,Vector2i.ZERO)
 				UNDO_HISTORY.push_front( ImageTexture.create_from_image(bg))
@@ -101,7 +125,6 @@ func make_straight_lines(event,offset):
 			BRUSH_IS_RESET = true
 
 
-
 func handle_input(event:InputEvent):
 
 	var offset = Vector2(-15,-3)
@@ -114,7 +137,7 @@ func handle_input(event:InputEvent):
 		print(event.position)
 	if(event is InputEventMouse && MAKING_STRAIGHT_LINE == false):
 		if event is InputEventMouseMotion:
-			$CURSOR_VIEWPORT/BRUSH.position =event.position
+			$CURSOR_VIEWPORT/BRUSH.position =event.position - 	$CURSOR_VIEWPORT/BRUSH.size / 2.0
 			if(VIRTUAL_STARTING_POINT_SET == true ):
 				VIRTUAL_STARTING_POINT_SET = false
 				$CURSOR_VIEWPORT/Line2D.points[1] = event.position+offset
@@ -130,11 +153,42 @@ func handle_input(event:InputEvent):
 		_on_undo_pressed()
 	if(event.is_action_released("save_doodle")&& Input.is_action_pressed("control")):
 		_on_save_pressed()
-	if(event.is_action_released("paste")&& Input.is_action_pressed("control")):
+	if(event.is_action_released("paste")):
 		_on_paste_pressed()
-	if(Input.is_action_just_pressed("mouse_click")):
+	if(Input.is_action_just_released("mouse_click")):
 
-		add_to_history()
+		HISTORY_TIMER.start()
+	if(Input.is_action_just_released("White")):
+		_on_white_pressed()
+	if(Input.is_action_just_released("Black")):
+		_on_black_pressed()
+	if(Input.is_action_just_released("D_Grey")):
+		_on_dark_grey_pressed()
+	if(Input.is_action_just_released("L_Grey")):
+		_on_light_grey_pressed()
+	if(Input.is_action_just_released("Grey")):
+		_on_grey_pressed()
+	if(Input.is_action_just_released("Green")):
+		_on_green_pressed()
+	if(Input.is_action_just_released("Red")):
+		_on_red_pressed()
+	if(Input.is_action_just_released("Yellow")):
+		_on_yellow_pressed()
+	if(Input.is_action_just_released("Blue")):
+		_on_blue_pressed()
+	if(Input.is_action_pressed("Increase_Size")):
+		var og = $CURSOR_VIEWPORT/BRUSH.size
+		$CURSOR_VIEWPORT/Line2D.width =	 clamp($CURSOR_VIEWPORT/Line2D.width *1.1, 0.5, 100)
+		$SubViewport/Line2D.width = $CURSOR_VIEWPORT/Line2D.width
+		$CURSOR_VIEWPORT/BRUSH.size = Vector2.ONE * $CURSOR_VIEWPORT/Line2D.width
+		$CURSOR_VIEWPORT/BRUSH.position-=($CURSOR_VIEWPORT/BRUSH.size - og)/2.0
+	if(Input.is_action_pressed("Decrease_Size")):
+		var og = $CURSOR_VIEWPORT/BRUSH.size
+
+		$CURSOR_VIEWPORT/Line2D.width =	 clamp($CURSOR_VIEWPORT/Line2D.width *0.9, 0.5, 100)
+		$SubViewport/Line2D.width = $CURSOR_VIEWPORT/Line2D.width
+		$CURSOR_VIEWPORT/BRUSH.size = Vector2.ONE * $CURSOR_VIEWPORT/Line2D.width
+		$CURSOR_VIEWPORT/BRUSH.position-=($CURSOR_VIEWPORT/BRUSH.size - og)/2.0
 
 
 	if( event is InputEventMouse && Input.is_action_just_pressed("right_mouse_click")):
@@ -183,6 +237,7 @@ func handle_input(event:InputEvent):
 				STARTING_POINT_SET = true
 				$SubViewport/Line2D.points[0] = event.position+offset
 				$SubViewport/Line2D.points[1] = event.position+offset
+	copy_screen_to_input_window()
 
 func copy_screen_to_input_window():
 	var image:Image = $SubViewport.get_texture().get_image()
@@ -190,9 +245,9 @@ func copy_screen_to_input_window():
 		var bg:Image = $TextureRect.texture.get_image()
 		if(bg != null):
 			var rect = Rect2i(Vector2i.ZERO, image.get_size())
-			#bg.blend_rect(image,rect,Vector2i.ZERO)
-			#bg.resize(1920,1080,Image.INTERPOLATE_TRILINEAR);
 			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.create_from_image(image)
+			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.show()
+			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.stretch_mode = $TextureRect.stretch_mode
 			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.texture = ImageTexture.create_from_image(bg)
 		else:
 			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.create_from_image(image);
@@ -230,6 +285,7 @@ func _on_paste_pressed() -> void:
 	var clipboard_image:Image = DisplayServer.clipboard_get_image()
 	if(clipboard_image != null):
 
+		$TextureRect.show()
 		if(clipboard_image.get_width() < 1920 && clipboard_image.get_height() < 1080):
 			$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
 		else:
@@ -242,23 +298,17 @@ func _on_undo_pressed() -> void:
 
 func undo():
 		$SubViewport.render_target_clear_mode = 2
+
+		$TextureRect.show()
 		if(UNDO_HISTORY.size()>0):
 			var texture =UNDO_HISTORY.pop_front()
 			var image = texture.get_image()
 			$TextureRect.texture = ImageTexture.create_from_image(image)
-			$TextureRect.show()
-			#ImageTexture.create_from_image(texture)
-			#var bg = $TextureRect.texture.get_image()
-			#var image = texture.get_image()
-			#if(bg == null):
-			#else:
-				#var rect = Rect2i(Vector2i.ZERO, image.get_size())
-				#bg.blend_rect(image,rect,Vector2i.ZERO)
-				#$TextureRect.texture = ImageTexture.create_from_image(bg)
+
+
 		else:
 			$TextureRect.texture = ImageTexture.new()
-#		else:
-			#$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE.texture = ImageTexture.new()
+#
 
 
 func _on_menu_mouse_entered() -> void:
@@ -327,6 +377,7 @@ func on_load_from_recents(recent:Recent):
 		$RECENTS.hide()
 		var image_from_path:Image = try_to_load_texture_from_path(recent.Path)
 
+		$TextureRect.show()
 		if(image_from_path.get_width() < 1920 && image_from_path.get_height() < 1080):
 			$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
 		else:
@@ -368,6 +419,46 @@ func build_recents_list():
 		recent_control.get_node("TextureRect").texture = ImageTexture.create_from_image(image_from_path)
 		$RECENTS/Control2/ScrollContainer/RECENTS_CONTAINER.add_child(recent_control)
 
+
+func blend_images_for_saving():
+	var image:Image = $SubViewport.get_texture().get_image()
+	var image_to_save:Image;
+	var rect = Rect2i(Vector2i.ZERO, Vector2(1920,1080))
+	if(BG_CANVAS != null):
+		var bg_image = 	BG_CANVAS.texture.get_image()
+		if($TextureRect.texture != null):
+			var bg:Image = $TextureRect.texture.get_image()
+			if(bg != null):
+				var width_ = bg.get_width()
+				var height_ = bg.get_height()
+				if(width_ < 1920 || height_ < 1920):
+					var x = 960 - (width_/2)
+					var y = 540 - ( height_/2)
+					bg_image.blend_rect(bg,rect,Vector2(abs(x),abs(y)))
+				else:
+					bg_image.blend_rect(bg,rect,Vector2i.ZERO)
+
+		bg_image.blend_rect(image,rect,Vector2i.ZERO)
+		image_to_save = bg_image;
+
+	elif($TextureRect.texture != null):
+		var bg:Image = $TextureRect.texture.get_image()
+		if(bg != null):
+			var width_ = bg.get_width()
+			var height_ = bg.get_height()
+			if(width_ < 1920 || height_ < 1920):
+				var x = 960 - (width_/2)
+				var y = 540 - ( height_/2)
+				bg.blend_rect(image,rect,Vector2(abs(x),abs(y)))
+			else:
+				bg.blend_rect(image,rect,Vector2i.ZERO)
+			image_to_save = bg
+		else:
+			image_to_save = image;
+	else:
+		image_to_save = image;
+	return image_to_save
+
 func save_current_to_recents():
 	var recent
 
@@ -377,25 +468,13 @@ func save_current_to_recents():
 	else:
 		recent = Recent.new()
 
-	var image:Image = $SubViewport.get_texture().get_image()
-	var rect = Rect2i(Vector2i.ZERO, image.get_size())
-	var image_to_save;
-	if($TextureRect.texture != null):
-		var bg = $TextureRect.texture.get_image()
-		if(bg != null):
-			bg.blend_rect(image,rect,Vector2i.ZERO)
-			image_to_save = bg;
-		else:
-			image_to_save = image
 
-	else:
-		image_to_save = image
 
-	var ImageToSave :Image =image_to_save
+	var ImageToSave :Image =blend_images_for_saving()
 
 	var Thumb :Image = ImageToSave.duplicate(true)
 	if(ImageToSave == null):return;
-	Thumb.resize(160,90,Image.INTERPOLATE_TRILINEAR)
+	Thumb.resize(160,90,Image.INTERPOLATE_NEAREST)
 	var dateTime = "%s" % Time.get_datetime_string_from_system(true,false)
 	dateTime=dateTime.replacen(":","_")
 	var path = "user://%s.png"%dateTime
@@ -409,20 +488,15 @@ func save_current_to_recents():
 	DATA.RECENTS.push_front(recent)
 	DATA.save_everything()
 
+var BG_CANVAS:TextureRect = null
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	$Control/FileDialog.hide()
-	var bg = $TextureRect.texture.get_image()
-	var image:Image = $SubViewport.get_texture().get_image()
-	var rect = Rect2i(Vector2i.ZERO, image.get_size())
-	var image_to_save;
-	if(bg != null):
-		bg.blend_rect(image,rect,Vector2i.ZERO)
-		image_to_save = bg;
-	else:
-		image_to_save = image
-	var Thumb :Image = image_to_save.duplicate(true)
-	Thumb.resize(160,90,Image.INTERPOLATE_TRILINEAR)
+
+	var ImageToSave :Image =blend_images_for_saving()
+
+	var Thumb :Image = ImageToSave.duplicate(true)
+	Thumb.resize(160,90,Image.INTERPOLATE_NEAREST)
 	var dateTime = "%s" % Time.get_datetime_string_from_system(true,false)
 	dateTime=dateTime.replacen(":","_")
 	var recent:Recent;
@@ -437,7 +511,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 
 	DATA.RECENTS.push_front(recent)
 	DATA.CALLBACK = build_recents_list
-	image_to_save.save_png(path)
+	ImageToSave.save_png(path)
 	Thumb.save_png(thumb_path)
 	DATA.save_everything()
 	CURRENT_FILE_WAS_SAVED_OUTSIDE = true
@@ -452,7 +526,7 @@ func _on_open_dialog_file_selected(path: String) -> void:
 	#load file and create recent
 	var image_from_path:Image = try_to_load_texture_from_path(path)
 	var Thumb :Image = image_from_path.duplicate(true)
-	Thumb.resize(160,90,Image.INTERPOLATE_TRILINEAR)
+	Thumb.resize(160,90,Image.INTERPOLATE_NEAREST)
 	var dateTime = "%s" % Time.get_datetime_string_from_system(true,false)
 	dateTime=dateTime.replacen(":","_")
 	var thumb_path = "user://thumb-%s.png"%dateTime
@@ -467,6 +541,9 @@ func _on_open_dialog_file_selected(path: String) -> void:
 	LAST_FILE_OPENED = recent;
 	var width = image_from_path.get_width()
 	var height = image_from_path.get_height()
+	#_on_hide_bg_pressed()
+	$TextureRect.show()
+
 	if(width< 1920 && height < 1080):
 
 		$TextureRect.stretch_mode =TextureRect.STRETCH_KEEP_CENTERED
@@ -477,4 +554,116 @@ func _on_open_dialog_file_selected(path: String) -> void:
 
 func _on_save_draft_pressed() -> void:
 		save_current_to_recents()
+		await WAIT.for_seconds(0.1)
 		clear_screen()
+
+
+func _on_light_bg_2_pressed() -> void:
+	_on_hide_bg_pressed()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_5.show()
+	$CANVAS_5.show()
+	BG_CANVAS = $CANVAS_5
+
+
+func _on_light_bg_1_pressed() -> void:
+	_on_hide_bg_pressed()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_4.show()
+	$CANVAS_4.show()
+	BG_CANVAS = $CANVAS_4
+
+
+
+func _on_dark_bg_3_pressed() -> void:
+	_on_hide_bg_pressed()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_3.show()
+	$CANVAS_3.show()
+	BG_CANVAS = $CANVAS_3
+
+
+
+func _on_dark_bg_2_pressed() -> void:
+	_on_hide_bg_pressed()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_2.show()
+	$CANVAS_2.show()
+	BG_CANVAS = $CANVAS_2
+
+
+
+func _on_dark_bg_1_pressed() -> void:
+	_on_hide_bg_pressed()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_1.show()
+	$CANVAS_1.show()
+	BG_CANVAS = $CANVAS_1
+
+
+func _on_yellow_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = YELLOW_COLOR;
+	$SubViewport/Line2D.default_color = YELLOW_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = YELLOW_COLOR;
+
+
+func _on_white_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = WHITE_COLOR;
+	$SubViewport/Line2D.default_color = WHITE_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = WHITE_COLOR;
+
+
+func _on_black_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = BLACK_COLOR;
+	$SubViewport/Line2D.default_color = BLACK_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = BLACK_COLOR;
+
+
+func _on_light_grey_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = LIGHT_GREY_COLOR;
+	$SubViewport/Line2D.default_color = LIGHT_GREY_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = LIGHT_GREY_COLOR;
+
+
+func _on_grey_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = GREY_COLOR;
+	$SubViewport/Line2D.default_color = GREY_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = GREY_COLOR;
+
+
+func _on_dark_grey_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = DARK_GREY_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = DARK_GREY_COLOR;
+	$SubViewport/Line2D.default_color = DARK_GREY_COLOR;
+	pass # Replace with function body.
+
+
+func _on_red_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = RED_COLOR;
+	$SubViewport/Line2D.default_color = RED_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = RED_COLOR;
+	pass # Replace with function body.
+
+func _on_green_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = GREEN_COLOR;
+	$SubViewport/Line2D.default_color = GREEN_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = GREEN_COLOR;
+	pass # Replace with function body.
+
+
+func _on_hide_bg_pressed() -> void:
+	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.hide()
+	$TextureRect.hide()
+	BG_CANVAS = null;
+	$CANVAS_1.hide()
+	$CANVAS_2.hide()
+	$CANVAS_3.hide()
+	$CANVAS_4.hide()
+	$CANVAS_5.hide()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_1.hide()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_2.hide()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_3.hide()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_4.hide()
+	$CONTROL/SubViewportContainer/SubViewport/CANVAS_5.hide()
+
+
+func _on_blue_pressed() -> void:
+	$CURSOR_VIEWPORT/Line2D.default_color = BLUE_COLOR;
+	$SubViewport/Line2D.default_color = BLUE_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.color = BLUE_COLOR;
+	pass # Replace with function body.

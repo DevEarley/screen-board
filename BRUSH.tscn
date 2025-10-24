@@ -1,19 +1,126 @@
-[gd_scene load_steps=7 format=3 uid="uid://216oynde0u82"]
+[gd_scene load_steps=33 format=3 uid="uid://216oynde0u82"]
 
 [ext_resource type="Script" uid="uid://c41syovpkxj2v" path="res://brush.gd" id="1_jr7ni"]
+[ext_resource type="Texture2D" uid="uid://buj7wjuf4pqth" path="res://Paper003_4K_NormalDX.png" id="2_5ono5"]
 [ext_resource type="Script" uid="uid://cdl6n4avmgb6b" path="res://pass_control.gd" id="2_kxle2"]
 [ext_resource type="Texture2D" uid="uid://2magpde8r3kw" path="res://icon.svg" id="3_mhht3"]
 
+[sub_resource type="Gradient" id="Gradient_5ono5"]
+colors = PackedColorArray(0.054599997, 0.07, 0.06486667, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cotvx"]
+gradient = SubResource("Gradient_5ono5")
+width = 1920
+height = 1080
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0, 0)
+repeat = 2
+
+[sub_resource type="Gradient" id="Gradient_j8n02"]
+offsets = PackedFloat32Array(0.9296296, 1)
+colors = PackedColorArray(0.11119685, 0.11119684, 0.11119684, 1, 0.102000006, 0.15, 0.14760001, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_e1vpf"]
+gradient = SubResource("Gradient_j8n02")
+width = 1920
+height = 1080
+fill_from = Vector2(1, 1)
+repeat = 1
+
+[sub_resource type="Gradient" id="Gradient_mhht3"]
+offsets = PackedFloat32Array(0, 0.98333335)
+colors = PackedColorArray(0.38, 0.4, 0.39833334, 1, 0.41215244, 0.4121525, 0.41215235, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_j8n02"]
+gradient = SubResource("Gradient_mhht3")
+width = 1920
+height = 1080
+fill_from = Vector2(1, 1)
+repeat = 1
+
+[sub_resource type="Gradient" id="Gradient_wpe18"]
+offsets = PackedFloat32Array(0, 0.94814813, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.9201237, 0.9883166, 0.9862414, 1, 0.8428, 0.98, 0.97771335, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_svvmr"]
+gradient = SubResource("Gradient_wpe18")
+width = 1920
+height = 1080
+fill_from = Vector2(1, 1)
+fill_to = Vector2(1, 0.02661344)
+repeat = 1
+
+[sub_resource type="Gradient" id="Gradient_e1vpf"]
+offsets = PackedFloat32Array(0.76111114, 0.7740741)
+colors = PackedColorArray(1, 1, 1, 1, 0.7876089, 0.9904955, 0.9999998, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wpe18"]
+gradient = SubResource("Gradient_e1vpf")
+width = 1920
+height = 1080
+fill_from = Vector2(1, 0.058549568)
+repeat = 1
+
 [sub_resource type="Gradient" id="Gradient_cotvx"]
-colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
+offsets = PackedFloat32Array(0, 0.90555555, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.7529412, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_5ono5"]
 gradient = SubResource("Gradient_cotvx")
 fill_from = Vector2(0, 0.51495725)
-fill_to = Vector2(0, 0)
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="Gradient_svvmr"]
+offsets = PackedFloat32Array(0.6018519, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kj6cc"]
+gradient = SubResource("Gradient_svvmr")
+fill = 1
+fill_from = Vector2(0.5277778, 0.48504272)
+fill_to = Vector2(1, 0.48504272)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhht3"]
 bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e1vpf"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpe18"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svvmr"]
+bg_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kj6cc"]
+bg_color = Color(0.6313726, 0.6313726, 0.6313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7k5dl"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cotvx"]
+bg_color = Color(0.4627451, 0.9607843, 0.8, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ono5"]
+bg_color = Color(0.9607843, 0, 0.30588236, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j8n02"]
+bg_color = Color(0.9019608, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8vw1"]
+bg_color = Color(0.4627451, 0.6509804, 0.9607843, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pmxta"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_duxl5"]
+bg_color = Color(0.40784314, 0.4117647, 0.40784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vak1m"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_b8vw1"]
+texture = ExtResource("2_5ono5")
 
 [node name="Control" type="SubViewportContainer"]
 anchors_preset = 15
@@ -24,6 +131,52 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_jr7ni")
+RED_COLOR = Color(0.9607843, 0, 0.30588236, 1)
+BLUE_COLOR = Color(0.4627451, 0.6509804, 0.9607843, 1)
+GREEN_COLOR = Color(0.4627451, 0.9607843, 0.8, 1)
+YELLOW_COLOR = Color(0.9019608, 1, 0, 1)
+BLACK_COLOR = Color(0.0035191667, 0.0035191681, 0.0035191672, 1)
+LIGHT_GREY_COLOR = Color(0.6313726, 0.6313726, 0.6313726, 1)
+GREY_COLOR = Color(0.32941177, 0.32941177, 0.32941177, 1)
+DARK_GREY_COLOR = Color(0.16862746, 0.16862746, 0.16862746, 1)
+WHITE_COLOR = Color(1, 1, 1, 1)
+
+[node name="CANVAS_1" type="TextureRect" parent="."]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+texture = SubResource("GradientTexture2D_cotvx")
+stretch_mode = 1
+
+[node name="CANVAS_2" type="TextureRect" parent="."]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+texture = SubResource("GradientTexture2D_e1vpf")
+
+[node name="CANVAS_3" type="TextureRect" parent="."]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+texture = SubResource("GradientTexture2D_j8n02")
+stretch_mode = 1
+
+[node name="CANVAS_4" type="TextureRect" parent="."]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+texture = SubResource("GradientTexture2D_svvmr")
+
+[node name="CANVAS_5" type="TextureRect" parent="."]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+texture = SubResource("GradientTexture2D_wpe18")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 show_behind_parent = true
@@ -52,6 +205,9 @@ position = Vector2(16, 5)
 points = PackedVector2Array(0, 0, 0, 0)
 width = 3.0
 default_color = Color(0.46080002, 0.96, 0.80192, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 
 [node name="CURSOR_VIEWPORT" type="SubViewport" parent="."]
 transparent_bg = true
@@ -60,16 +216,21 @@ canvas_item_default_texture_filter = 0
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
-[node name="BRUSH" type="ColorRect" parent="CURSOR_VIEWPORT"]
+[node name="BRUSH" type="TextureRect" parent="CURSOR_VIEWPORT"]
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(0.46080002, 0.96, 0.80192, 0.64705884)
+texture = SubResource("GradientTexture2D_kj6cc")
+expand_mode = 1
 
 [node name="Line2D" type="Line2D" parent="CURSOR_VIEWPORT"]
+visible = false
 position = Vector2(16, 5)
 points = PackedVector2Array(0, 0, 0, 0)
 width = 3.0
 default_color = Color(0.46080002, 0.96, 0.80192, 0.64705884)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 
 [node name="Control" type="Control" parent="."]
 custom_minimum_size = Vector2(1920, 1080)
@@ -115,7 +276,6 @@ filters = PackedStringArray("*.png")
 use_native_dialog = true
 
 [node name="Control" type="Control" parent="Control"]
-visible = false
 custom_minimum_size = Vector2(800, 100)
 layout_mode = 1
 anchors_preset = 5
@@ -142,41 +302,244 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="CLEAR" type="Button" parent="Control/Control/HBoxContainer"]
+[node name="Label2" type="Label" parent="Control/Control/HBoxContainer"]
 layout_mode = 2
-mouse_filter = 1
-text = "CLEAR"
-
-[node name="RECENTS" type="Button" parent="Control/Control/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 1
-text = "RECENTS"
-
-[node name="PASTE" type="Button" parent="Control/Control/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 1
-text = "PASTE"
-
-[node name="SAVE" type="Button" parent="Control/Control/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 1
-text = "SAVE"
-
-[node name="SAVE_DRAFT" type="Button" parent="Control/Control/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 1
-text = "SAVE DRAFT & CLEAR"
-
-[node name="OPEN" type="Button" parent="Control/Control/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 1
-text = "OPEN"
+text = "MENU:"
 
 [node name="PASSTHROUGH" type="Button" parent="Control/Control/HBoxContainer"]
 visible = false
 layout_mode = 2
 mouse_filter = 1
+mouse_default_cursor_shape = 2
 text = "PASSTHROUGH MODE OFF"
+
+[node name="RECENTS" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "RECENTS"
+
+[node name="CLEAR" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "CLEAR"
+
+[node name="SAVE_DRAFT" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "SAVE DRAFT & CLEAR"
+
+[node name="SAVE" type="Button" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "SAVE"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Control/HBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "BRUSH:"
+
+[node name="BLACK" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_e1vpf")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_e1vpf")
+theme_override_styles/hover = SubResource("StyleBoxFlat_e1vpf")
+text = "[1] BLACK"
+
+[node name="DARK_GREY" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_wpe18")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wpe18")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wpe18")
+text = "[2] D. GRAY"
+
+[node name="GREY" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_svvmr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_svvmr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_svvmr")
+text = "[3] GREY"
+
+[node name="LIGHT_GREY" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_kj6cc")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kj6cc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_kj6cc")
+text = "[4]  L.  GREY"
+
+[node name="WHITE" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_7k5dl")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7k5dl")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7k5dl")
+text = "[5] WHITE"
+
+[node name="GREEN" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_constants/h_separation = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_cotvx")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cotvx")
+theme_override_styles/hover = SubResource("StyleBoxFlat_cotvx")
+text = "[6] GREEN"
+
+[node name="RED" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_5ono5")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_5ono5")
+theme_override_styles/hover = SubResource("StyleBoxFlat_5ono5")
+text = "[7] RED"
+
+[node name="YELLOW" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_j8n02")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j8n02")
+theme_override_styles/hover = SubResource("StyleBoxFlat_j8n02")
+text = "[8] YELLOW"
+
+[node name="BLUE" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_b8vw1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_b8vw1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_b8vw1")
+text = "[9] BLUE"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "BG:"
+
+[node name="DARK_BG_1" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_pmxta")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pmxta")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pmxta")
+text = "BLACK"
+
+[node name="DARK_BG_2" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "V. DARK"
+
+[node name="DARK_BG_3" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_duxl5")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_duxl5")
+theme_override_styles/hover = SubResource("StyleBoxFlat_duxl5")
+text = "GREY"
+
+[node name="LIGHT_BG_1" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.32941177, 0.32941177, 0.32941177, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_vak1m")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vak1m")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vak1m")
+text = "WHITE"
+
+[node name="LIGHT_BG_2" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1.2995303e-06, 0.54951555, 0.5216815, 1)
+theme_override_colors/font_focus_color = Color(1.2995303e-06, 0.54951555, 0.5216815, 1)
+theme_override_colors/font_pressed_color = Color(1.2995303e-06, 0.54951555, 0.5216815, 1)
+theme_override_colors/font_hover_color = Color(9.62615e-07, 0.45299232, 0.42990547, 1)
+theme_override_colors/font_hover_pressed_color = Color(9.62615e-07, 0.45299232, 0.42990547, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_b8vw1")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_b8vw1")
+theme_override_styles/hover = SubResource("StyleBoxTexture_b8vw1")
+text = "WHITE LINED"
+
+[node name="PASTE" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "PASTE BG"
+
+[node name="OPEN" type="Button" parent="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "LOAD BG"
 
 [node name="QUIT" type="Button" parent="Control/Control/HBoxContainer"]
 layout_mode = 2
@@ -186,10 +549,12 @@ text = "QUIT"
 [node name="CONTROL" type="Window" parent="." node_paths=PackedStringArray("CONTROLLER")]
 transparent_bg = true
 oversampling_override = 1.0
+mode = 3
 title = "INPUT"
 initial_position = 3
 size = Vector2i(1920, 1080)
 current_screen = 1
+borderless = true
 transparent = true
 content_scale_size = Vector2i(1920, 1080)
 content_scale_mode = 2
@@ -235,6 +600,48 @@ transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
+
+[node name="CANVAS_1" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = SubResource("GradientTexture2D_cotvx")
+stretch_mode = 1
+
+[node name="CANVAS_3" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = SubResource("GradientTexture2D_j8n02")
+stretch_mode = 1
+
+[node name="CANVAS_2" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1921.0
+offset_bottom = 1080.0
+texture = SubResource("GradientTexture2D_e1vpf")
+
+[node name="CANVAS_4" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = SubResource("GradientTexture2D_svvmr")
+
+[node name="CANVAS_5" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = SubResource("GradientTexture2D_wpe18")
 
 [node name="TextureRect_CLONE2" type="TextureRect" parent="CONTROL/SubViewportContainer/SubViewport"]
 show_behind_parent = true
@@ -321,13 +728,27 @@ columns = 4
 [connection signal="file_selected" from="Control/FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="file_selected" from="Control/OpenDialog" to="." method="_on_open_dialog_file_selected"]
 [connection signal="mouse_exited" from="Control/Control" to="." method="_on_control_mouse_exited"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/CLEAR" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/RECENTS" to="." method="_on_recents_pressed"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/SAVE" to="." method="_on_save_pressed"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/SAVE_DRAFT" to="." method="_on_save_draft_pressed"]
-[connection signal="pressed" from="Control/Control/HBoxContainer/OPEN" to="." method="_on_open_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/PASSTHROUGH" to="." method="_on_passthrough_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/RECENTS" to="." method="_on_recents_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/CLEAR" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/SAVE_DRAFT" to="." method="_on_save_draft_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/SAVE" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/BLACK" to="." method="_on_black_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/DARK_GREY" to="." method="_on_dark_grey_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/GREY" to="." method="_on_grey_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/LIGHT_GREY" to="." method="_on_light_grey_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/WHITE" to="." method="_on_white_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/GREEN" to="." method="_on_green_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/RED" to="." method="_on_red_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/YELLOW" to="." method="_on_yellow_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/BLUE" to="." method="_on_blue_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/DARK_BG_1" to="." method="_on_dark_bg_1_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/DARK_BG_2" to="." method="_on_dark_bg_2_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/DARK_BG_3" to="." method="_on_dark_bg_3_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/LIGHT_BG_1" to="." method="_on_light_bg_1_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/LIGHT_BG_2" to="." method="_on_light_bg_2_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
+[connection signal="pressed" from="Control/Control/HBoxContainer/VBoxContainer/HBoxContainer/OPEN" to="." method="_on_open_pressed"]
 [connection signal="pressed" from="Control/Control/HBoxContainer/QUIT" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="CONTROL/SubViewportContainer/Control/HBoxContainer/PASTE" to="." method="_on_paste_pressed"]
