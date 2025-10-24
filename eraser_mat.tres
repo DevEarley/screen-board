@@ -1,0 +1,6 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d4ed5lu2xn3sj"]
+
+[ext_resource type="Shader" uid="uid://cswpbottjhya1" path="res://eraser_shader.tres" id="1_cyud2"]
+
+[resource]
+shader = ExtResource("1_cyud2")

@@ -14,6 +14,11 @@ var MAKING_STRAIGHT_LINE = false
 var clicks = 0
 var save_timer:Timer
 var HISTORY_TIMER:Timer
+var ERASER_MODE = false
+var LAST_BRUSH:Color
+@export var ERASER_VIEWPORT_Line2D:Line2D
+@export var ERASER_VIEWPORT:Viewport
+@export var ERASER_VIEWPORT_2:Viewport
 
 @export var RED_COLOR:Color;
 @export var BLUE_COLOR:Color;
@@ -26,7 +31,7 @@ var HISTORY_TIMER:Timer
 @export var WHITE_COLOR:Color;
 
 func _ready() -> void:
-
+	LAST_BRUSH = GREEN_COLOR
 	get_tree().get_root().set_transparent_background(true)
 	save_timer = Timer.new()
 	add_child(save_timer)
@@ -59,7 +64,7 @@ func _notification(what):
 
 func clear_screen():
 	add_to_history()
-
+	$BRUSH_STROKES.texture= ImageTexture.new()
 	CURRENT_FILE_WAS_SAVED_OUTSIDE = false
 	OPENED_FROM_RECENT = false
 	LAST_FILE_OPENED = null
@@ -85,6 +90,7 @@ func on_save_timer_timeout():
 var READY_TO_ADD_TO_HISTORY = true
 
 func add_to_history():
+	print("add_to_history")
 	if(READY_TO_ADD_TO_HISTORY == true):
 		READY_TO_ADD_TO_HISTORY = false
 		save_timer.start()
@@ -92,8 +98,10 @@ func add_to_history():
 		print(clicks)
 		if(UNDO_HISTORY.size()>100):
 				UNDO_HISTORY.pop_back()
-		var texture = $SubViewport.get_texture()
-		var image= texture.get_image()
+		prep_for_eraser()
+		var image:Image =$BRUSH_STROKES.texture.get_image()
+
+		#var image= texture.get_image()
 		if($TextureRect.texture != null):
 			var bg = $TextureRect.texture.get_image()
 			if(bg == null):
@@ -106,23 +114,6 @@ func add_to_history():
 		else:
 			UNDO_HISTORY.push_front(ImageTexture.create_from_image(image))
 
-func make_straight_lines(event,offset):
-		if( STARTING_POINT_SET == false):
-			STARTING_POINT_SET = true
-			MAKING_STRAIGHT_LINE = true
-			$SubViewport/Line2D.points[0] = event.position + offset
-			$CURSOR_VIEWPORT/Line2D.points[0] = event.position+offset
-			$SubViewport/Line2D.points[1] = event.position + offset
-			#$SubViewport/BRUSH.position = event.position
-			BRUSH_IS_RESET = false
-			#add_to_history()
-
-		elif( STARTING_POINT_SET == true):
-			STARTING_POINT_SET = false
-			MAKING_STRAIGHT_LINE = false
-			$SubViewport/Line2D.points[1] =event.position + offset
-			#$SubViewport/BRUSH.position = event.position
-			BRUSH_IS_RESET = true
 
 
 func handle_input(event:InputEvent):
@@ -176,6 +167,16 @@ func handle_input(event:InputEvent):
 		_on_yellow_pressed()
 	if(Input.is_action_just_released("Blue")):
 		_on_blue_pressed()
+	if(Input.is_action_just_released("Eraser")):
+		ERASER_MODE = true
+		$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (ON)"
+		prep_for_eraser()
+	if(Input.is_action_just_released("Brush")):
+		$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
+		ERASER_MODE = false
+		$CURSOR_VIEWPORT/Line2D.default_color = LAST_BRUSH;
+		$SubViewport/Line2D.default_color = LAST_BRUSH;
+		$CURSOR_VIEWPORT/BRUSH.modulate = LAST_BRUSH;
 	if(Input.is_action_pressed("Increase_Size")):
 		var og = $CURSOR_VIEWPORT/BRUSH.size
 		$CURSOR_VIEWPORT/Line2D.width =	 clamp($CURSOR_VIEWPORT/Line2D.width *1.1, 0.5, 100)
@@ -211,32 +212,85 @@ func handle_input(event:InputEvent):
 
 	elif( event is InputEventMouse && Input.is_action_just_released("mouse_click")):
 		if(Input.is_action_pressed("shift")):
-			make_straight_lines(event,offset)
+			if( STARTING_POINT_SET == false):
+				STARTING_POINT_SET = true
+				MAKING_STRAIGHT_LINE = true
+				$SubViewport/Line2D.points[0] = event.position + offset
+				$CURSOR_VIEWPORT/Line2D.points[0] = event.position+offset
+				$SubViewport/Line2D.points[1] = event.position + offset
+				#$SubViewport/BRUSH.position = event.position
+				BRUSH_IS_RESET = false
+				#add_to_history()
+
+			elif( STARTING_POINT_SET == true):
+				STARTING_POINT_SET = false
+				MAKING_STRAIGHT_LINE = false
+				$SubViewport/Line2D.points[1] =event.position + offset
+				#$SubViewport/BRUSH.position = event.position
+				BRUSH_IS_RESET = true
+
 		else:
 				BRUSH_IS_RESET = true
 				STARTING_POINT_SET = false
-				$SubViewport/Line2D.points[0] = Vector2.ZERO
-				$SubViewport/Line2D.points[1] = Vector2.ZERO
 
+				if(ERASER_MODE == true):
+					ERASER_VIEWPORT_Line2D.points[0] = Vector2.ZERO
+					ERASER_VIEWPORT_Line2D.points[1] = Vector2.ZERO
+
+					var eraser_mask:Image= ERASER_VIEWPORT_2.get_texture().get_image()
+					var drawing_layer:Image = $SubViewport.get_texture().get_image()
+					var rect = Rect2i(Vector2i.ZERO, Vector2(1920,1080))
+					if($BRUSH_STROKES.texture!=null):
+						var old_mix:Image = $BRUSH_STROKES.texture.get_image()
+						if(old_mix!=null):
+							old_mix.blend_rect(drawing_layer,rect,Vector2i.ZERO)
+							drawing_layer.blit_rect_mask(old_mix,eraser_mask,rect,Vector2i.ZERO)
+						else:
+							drawing_layer.blit_rect_mask(drawing_layer,eraser_mask,rect,Vector2i.ZERO)
+
+					else:
+						drawing_layer.blit_rect_mask(drawing_layer,eraser_mask,rect,Vector2i.ZERO)
+
+					$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
+					$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
+					ERASER_VIEWPORT.render_target_clear_mode = 2
+					$SubViewport.render_target_clear_mode = 2
+				else:
+					$SubViewport/Line2D.points[0] = Vector2.ZERO
+					$SubViewport/Line2D.points[1] = Vector2.ZERO
 	elif event is InputEventMouseMotion:
 		if(Input.is_action_pressed("mouse_click")):
 
+			var point_0;
+			var point_1;
+			if(ERASER_MODE == true):
+				point_0 = ERASER_VIEWPORT_Line2D.points[0]
+				point_1 = ERASER_VIEWPORT_Line2D.points[1]
+			else:
+				point_0 = $SubViewport/Line2D.points[0]
+				point_1 = $SubViewport/Line2D.points[1]
 			if(STARTING_POINT_SET == true && BRUSH_IS_RESET == false ):
 				STARTING_POINT_SET = false
-				$SubViewport/Line2D.points[1] = event.position+offset
+				point_1 = event.position+offset
 			elif(STARTING_POINT_SET == false && BRUSH_IS_RESET == false ):
 				STARTING_POINT_SET = true
-				$SubViewport/Line2D.points[0] = event.position+offset
+				point_0 = event.position+offset
 			elif(STARTING_POINT_SET == true && BRUSH_IS_RESET == true ):
 				BRUSH_IS_RESET = false
 				STARTING_POINT_SET = false
-				$SubViewport/Line2D.points[0] = event.position+offset
-				$SubViewport/Line2D.points[1] = event.position+offset
+				point_0 = event.position+offset
+				point_1= event.position+offset
 			elif(STARTING_POINT_SET == false && BRUSH_IS_RESET == true ):
 				BRUSH_IS_RESET = false
 				STARTING_POINT_SET = true
-				$SubViewport/Line2D.points[0] = event.position+offset
-				$SubViewport/Line2D.points[1] = event.position+offset
+				point_0 = event.position+offset
+				point_1= event.position+offset
+			if(ERASER_MODE == true):
+				ERASER_VIEWPORT_Line2D.points[0] =point_0
+				ERASER_VIEWPORT_Line2D.points[1] =point_1
+			else:
+				$SubViewport/Line2D.points[0] = point_0
+				$SubViewport/Line2D.points[1] = point_1
 	copy_screen_to_input_window()
 
 func copy_screen_to_input_window():
@@ -303,11 +357,11 @@ func undo():
 		if(UNDO_HISTORY.size()>0):
 			var texture =UNDO_HISTORY.pop_front()
 			var image = texture.get_image()
-			$TextureRect.texture = ImageTexture.create_from_image(image)
+			$BRUSH_STROKES.texture = ImageTexture.create_from_image(image)
 
 
 		else:
-			$TextureRect.texture = ImageTexture.new()
+			$BRUSH_STROKES.texture = ImageTexture.new()
 #
 
 
@@ -421,7 +475,9 @@ func build_recents_list():
 
 
 func blend_images_for_saving():
-	var image:Image = $SubViewport.get_texture().get_image()
+	prep_for_eraser()
+	var image:Image =$BRUSH_STROKES.texture.get_image()
+
 	var image_to_save:Image;
 	var rect = Rect2i(Vector2i.ZERO, Vector2(1920,1080))
 	if(BG_CANVAS != null):
@@ -597,53 +653,80 @@ func _on_dark_bg_1_pressed() -> void:
 
 
 func _on_yellow_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = YELLOW_COLOR;
 	$SubViewport/Line2D.default_color = YELLOW_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = YELLOW_COLOR;
+	LAST_BRUSH = YELLOW_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 
 func _on_white_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = WHITE_COLOR;
 	$SubViewport/Line2D.default_color = WHITE_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = WHITE_COLOR;
+	LAST_BRUSH = WHITE_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 
 func _on_black_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = BLACK_COLOR;
 	$SubViewport/Line2D.default_color = BLACK_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = BLACK_COLOR;
-
+	LAST_BRUSH = BLACK_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 func _on_light_grey_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = LIGHT_GREY_COLOR;
 	$SubViewport/Line2D.default_color = LIGHT_GREY_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = LIGHT_GREY_COLOR;
+	LAST_BRUSH = LIGHT_GREY_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 
 func _on_grey_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = GREY_COLOR;
 	$SubViewport/Line2D.default_color = GREY_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = GREY_COLOR;
-
+	LAST_BRUSH = GREY_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 func _on_dark_grey_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = DARK_GREY_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = DARK_GREY_COLOR;
 	$SubViewport/Line2D.default_color = DARK_GREY_COLOR;
-	pass # Replace with function body.
+	LAST_BRUSH = DARK_GREY_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 
 func _on_red_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = RED_COLOR;
 	$SubViewport/Line2D.default_color = RED_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = RED_COLOR;
-	pass # Replace with function body.
+	LAST_BRUSH = RED_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 func _on_green_pressed() -> void:
+	ERASER_MODE = false
 	$CURSOR_VIEWPORT/Line2D.default_color = GREEN_COLOR;
 	$SubViewport/Line2D.default_color = GREEN_COLOR;
 	$CURSOR_VIEWPORT/BRUSH.modulate = GREEN_COLOR;
-	pass # Replace with function body.
+	LAST_BRUSH = GREEN_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
+
+func _on_blue_pressed() -> void:
+	ERASER_MODE = false
+	$CURSOR_VIEWPORT/Line2D.default_color = BLUE_COLOR;
+	$SubViewport/Line2D.default_color = BLUE_COLOR;
+	$CURSOR_VIEWPORT/BRUSH.modulate = BLUE_COLOR;
+	LAST_BRUSH = BLUE_COLOR
+	$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
 
 
 func _on_hide_bg_pressed() -> void:
@@ -662,8 +745,32 @@ func _on_hide_bg_pressed() -> void:
 	$CONTROL/SubViewportContainer/SubViewport/CANVAS_5.hide()
 
 
-func _on_blue_pressed() -> void:
-	$CURSOR_VIEWPORT/Line2D.default_color = BLUE_COLOR;
-	$SubViewport/Line2D.default_color = BLUE_COLOR;
-	$CURSOR_VIEWPORT/BRUSH.color = BLUE_COLOR;
-	pass # Replace with function body.
+
+func _on_eraser_pressed() -> void:
+	ERASER_MODE = !ERASER_MODE
+	if(ERASER_MODE):
+		$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (ON)"
+		prep_for_eraser()
+	else:
+		$Control/Control/HBoxContainer/VBoxContainer/HBoxContainer2/ERASER.text = "[E]RASER (OFF)"
+
+		$CURSOR_VIEWPORT/Line2D.default_color = LAST_BRUSH;
+		$SubViewport/Line2D.default_color = LAST_BRUSH;
+		$CURSOR_VIEWPORT/BRUSH.modulate = LAST_BRUSH;
+
+func prep_for_eraser():
+
+		var drawing_layer:Image = $SubViewport.get_texture().get_image()
+		var rect = Rect2i(Vector2i.ZERO, Vector2(1920,1080))
+		if($BRUSH_STROKES.texture!=null):
+			var old_mix:Image = $BRUSH_STROKES.texture.get_image()
+			if(old_mix!=null):
+				old_mix.blend_rect(drawing_layer,rect,Vector2i.ZERO)
+				$BRUSH_STROKES.texture = ImageTexture.create_from_image(old_mix)
+			else:
+				$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
+		else:
+			$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
+
+		$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
+		$SubViewport.render_target_clear_mode = 2
