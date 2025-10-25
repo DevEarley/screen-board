@@ -252,7 +252,9 @@ func handle_input(event:InputEvent):
 						drawing_layer.blit_rect_mask(drawing_layer,eraser_mask,rect,Vector2i.ZERO)
 
 					$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
-					$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
+
+					if($CONTROL.visible == true):
+						$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
 					ERASER_VIEWPORT.render_target_clear_mode = 2
 					$SubViewport.render_target_clear_mode = 2
 				else:
@@ -294,6 +296,7 @@ func handle_input(event:InputEvent):
 	copy_screen_to_input_window()
 
 func copy_screen_to_input_window():
+	if($CONTROL.visible == false):return;
 	var image:Image = $SubViewport.get_texture().get_image()
 	if( $TextureRect.texture!=null):
 		var bg:Image = $TextureRect.texture.get_image()
@@ -730,7 +733,6 @@ func _on_blue_pressed() -> void:
 
 
 func _on_hide_bg_pressed() -> void:
-	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.hide()
 	$TextureRect.hide()
 	BG_CANVAS = null;
 	$CANVAS_1.hide()
@@ -738,6 +740,8 @@ func _on_hide_bg_pressed() -> void:
 	$CANVAS_3.hide()
 	$CANVAS_4.hide()
 	$CANVAS_5.hide()
+
+	$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE2.hide()
 	$CONTROL/SubViewportContainer/SubViewport/CANVAS_1.hide()
 	$CONTROL/SubViewportContainer/SubViewport/CANVAS_2.hide()
 	$CONTROL/SubViewportContainer/SubViewport/CANVAS_3.hide()
@@ -771,6 +775,15 @@ func prep_for_eraser():
 				$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
 		else:
 			$BRUSH_STROKES.texture = ImageTexture.create_from_image(drawing_layer)
-
-		$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
+		if($CONTROL.visible == true):
+			$CONTROL/SubViewportContainer/SubViewport/TextureRect_CLONE3.texture  =$BRUSH_STROKES.texture
 		$SubViewport.render_target_clear_mode = 2
+
+
+func _on_dual_screen_pressed() -> void:
+	if($CONTROL.visible == true):
+		$Control/Control/HBoxContainer/DUAL_SCREEN.text = "DUAL SCREEN (OFF)"
+		$CONTROL.hide()
+	else:
+		$Control/Control/HBoxContainer/DUAL_SCREEN.text = "DUAL SCREEN (ON)"
+		$CONTROL.show()

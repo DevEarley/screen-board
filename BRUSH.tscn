@@ -391,6 +391,12 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 text = "PASSTHROUGH MODE OFF"
 
+[node name="DUAL_SCREEN" type="Button" parent="Control/Control/Control/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+text = "DUAL SCREEN (ON)"
+
 [node name="RECENTS" type="Button" parent="Control/Control/Control/HBoxContainer"]
 layout_mode = 2
 mouse_filter = 1
@@ -834,6 +840,7 @@ columns = 4
 [connection signal="file_selected" from="Control/Control/OpenDialog" to="Control" method="_on_open_dialog_file_selected"]
 [connection signal="mouse_exited" from="Control/Control/Control" to="Control" method="_on_control_mouse_exited"]
 [connection signal="pressed" from="Control/Control/Control/HBoxContainer/PASSTHROUGH" to="Control" method="_on_passthrough_pressed"]
+[connection signal="pressed" from="Control/Control/Control/HBoxContainer/DUAL_SCREEN" to="Control" method="_on_dual_screen_pressed"]
 [connection signal="pressed" from="Control/Control/Control/HBoxContainer/RECENTS" to="Control" method="_on_recents_pressed"]
 [connection signal="pressed" from="Control/Control/Control/HBoxContainer/CLEAR" to="Control" method="_on_button_pressed"]
 [connection signal="pressed" from="Control/Control/Control/HBoxContainer/SAVE_DRAFT" to="Control" method="_on_save_draft_pressed"]

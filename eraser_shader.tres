@@ -1,7 +1,7 @@
 [gd_resource type="VisualShader" load_steps=5 format=3 uid="uid://cswpbottjhya1"]
 
 [sub_resource type="VisualShaderNodeFrame" id="VisualShaderNodeFrame_a4al1"]
-size = Vector2(1636.0006, 530.00024)
+size = Vector2(1636, 229.99998)
 title = "ERASER"
 attached_nodes = PackedInt32Array(5, 6, 8)
 
